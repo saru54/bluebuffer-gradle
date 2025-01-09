@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.core.infrastructure.mapper.UserSubscribeMapper">
+    <select id="findList">
+        select *
+        from user_subscribe
+        <where>
+            <if test="userId != null">
+                user_id = #{userId}
+            </if>
+            <if test="subscribeUserId  != null">
+                subscribe_user_id = #{subscribeUserId}
+            </if>
+        </where>
+    </select>
+</mapper>

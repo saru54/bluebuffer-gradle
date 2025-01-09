@@ -1,0 +1,12 @@
+# åºç¨æå¡ WEB è®¿é®ç«¯å£
+server:
+  port: 8083
+
+r2:
+  bucket:
+    image:
+      tempAccessUrl: https://pub-66bfcacb71d344a8a63f596b05fc076c.r2.dev
+      name: image
+  endPoint: https://68319f3eb6efe537ba6fbe983eb13156.r2.cloudflarestorage.com
+  secretAccessKey: 94c2f9d7b778d9bf08e9910e7533fe70d1f7b9123dae78e40d74074d4a376043
+  accessKeyId: ad6e409a3f3f7cbaf5d1e61d86fe0e35

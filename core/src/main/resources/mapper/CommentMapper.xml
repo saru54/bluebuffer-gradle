@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.core.infrastructure.mapper.CommentMapper">
+    <resultMap id="CommentInfoMap" type="com.core.domain.dto.CommentInfoDTO">
+        <result property="id" column="comment_id"/>
+        <result property="content" column="comment_content"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="createTime" column="comment_create_time"/>
+        <result property="like" column="comment_like"/>
+        <result property="images" column="comment_images" typeHandler="com.core.handler.StringListTypeHandler"/>
+        <association property="author" javaType="com.core.domain.dto.UserBasicInfoDTO">
+            <result property="id" column="user_id"/>
+            <result property="name" column="user_name"/>
+            <result property="image" column="user_image"/>
+        </association>
+    </resultMap>
+    <resultMap id="SubCommentInfoMap" type="com.core.domain.dto.SubCommentInfoDTO">
+        <result property="id" column="comment_id"/>
+        <result property="content" column="comment_content"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="createTime" column="comment_create_time"/>
+        <result property="like" column="comment_like"/>
+        <result property="blogId" column="comment_blog_id"/>
+        <association property="author" javaType="com.core.domain.dto.UserBasicInfoDTO">
+            <result property="id" column="author_user_id"/>
+            <result property="name" column="author_user_name"/>
+            <result property="image" column="author_user_image"/>
+        </association>
+        <association property="respondUser" javaType="com.core.domain.dto.UserBasicInfoDTO">
+            <result property="id" column="respond_user_id"/>
+            <result property="name" column="respond_user_name"/>
+            <result property="image" column="respond_user_image"/>
+        </association>
+    </resultMap>
+    <select id="findCommentInfoByPage" resultMap="CommentInfoMap">
+        select c.id                                     as comment_id,
+               c.content                                as comment_content,
+               c.like_count                             as like_count,
+               c.create_time                            as comment_create_time,
+               u.id                                     as user_id,
+               u.name                                   as user_name,
+               u.image                                  as user_image,
+               group_concat(ci.url)                     as comment_images,
+               IF(ucl.user_id is not null, true, false) as comment_like
+        from comment c
+                 inner join blog b on c.blog_id = b.id
+                 inner join user u on c.user_id = u.id
+
+                 left join comment_image ci on ci.comment_id = c.id
+                 left join user_comment_like ucl on ucl.comment_id = c.id and ucl.user_id = #{query.userId}
+        where b.id = #{query.blogId}
+        group by c.id, c.create_time
+        order by c.create_time desc
+    </select>
+
+
+    <select id="findSubCommentInfoByPage" resultMap="SubCommentInfoMap">
+        select sc.id                                     as comment_id,
+               sc.content                                as comment_content,
+               sc.like_count                             as like_count,
+               sc.create_time                            as comment_create_time,
+               b.id                                     as comment_blog_id,
+               author.id                                     as author_user_id,
+               author.name                                   as author_user_name,
+               author.image                                  as author_user_image,
+               respondUser.id                                     as respond_user_id,
+               respondUser.name                                   as respond_user_name,
+               respondUser.image                                  as respond_user_image,
+               IF(usl.user_id is not null, true, false) as comment_like
+        from subcomment sc
+        inner join comment c on c.id = sc.comment_id
+        inner join blog b on b.id = sc.blog_id
+        inner join user author on author.id = sc.user_id
+        inner join user respondUser on respondUser.id = sc.respond_user_id
+        left join user_subcomment_like usl on usl.user_id = #{query.userId} and usl.subcomment_id = sc.id
+        where c.id = #{query.commentId}
+    </select>
+</mapper>

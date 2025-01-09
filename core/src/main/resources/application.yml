@@ -1,0 +1,57 @@
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.blog.entity
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+
+
+server:
+  port: 8080
+
+token:
+  jwt:
+    secretKey: aisodjoasijdoiajsodijasodjasidjoiasjdoiajsdoiajsd
+    expiresTime: 3600000000000
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://localhost:3306/bluebuffer?useUnicode=true&characterEncoding=utf8&allowMultiQueries=true
+  lifecycle:
+    timeout-per-shutdown-phase: 20s
+
+redis:
+  uri: 127.0.0.1
+  port: 6379
+
+
+
+
+
+
+r2:
+  bucket:
+    image:
+      tempAccessUrl: https://pub-66bfcacb71d344a8a63f596b05fc076c.r2.dev
+      name: image
+  endPoint: https://68319f3eb6efe537ba6fbe983eb13156.r2.cloudflarestorage.com
+  secretAccessKey: 94c2f9d7b778d9bf08e9910e7533fe70d1f7b9123dae78e40d74074d4a376043
+  accessKeyId: ad6e409a3f3f7cbaf5d1e61d86fe0e35
+
+
+meilisearch:
+  #  masterkey: 8sFaCIlcRs8r2r9bR_Ok052UeMoLRjZDBhM0H0UL41M
+  masterkey: LtO2egnQbr_LPxcztNGW-zlQKU651fpLTNTJFcqTKyE
+  host: http://localhost:7700
+  index:
+    blog: blogs
+    comment: comments
+    club: clubs
+
+
+
+

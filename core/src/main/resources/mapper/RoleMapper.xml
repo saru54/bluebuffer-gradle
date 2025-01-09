@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.core.infrastructure.mapper.RoleMapper">
+    <select id="selectByUserId" resultType="com.core.domain.Role" >
+        select r.name,r.description , r.create_time , r.deleted
+        from role r
+                 inner join user_role ur on ur.role_id = r.id
+        where ur.user_id = #{userId}
+    </select>
+
+
+    <update id="batchUpdate" parameterType="java.util.List">
+        <foreach collection="list" item="role" separator=";" >
+            update  role
+            <set>
+                <if test="role.deleted != null">
+                    deleted = #{role.deleted},
+                </if>
+                <if test="role.name != null">
+                    name = #{role.name},
+                </if>
+                <if test="role.description != null">
+                    description = #{role.description},
+                </if>
+            </set>
+            where id = #{role.id}
+        </foreach>
+    </update>
+
+</mapper>

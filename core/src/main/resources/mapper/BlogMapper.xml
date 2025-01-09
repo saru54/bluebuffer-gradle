@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.core.infrastructure.mapper.BlogMapper">
+    <resultMap id="BlogResultMap" type="com.core.domain.Blog">
+        <result property="id" column="blog_id"/>
+        <result property="title" column="blog_title"/>
+        <result property="content" column="blog_content"/>
+        <result property="likeCount" column="like_count"/>
+        <result property="userId" column="blog_user_id"/>
+        <result property="clubId" column="blog_club_id"/>
+        <result property="images" column="blog_images" typeHandler="com.core.handler.StringListTypeHandler"/>
+        <association property="author" javaType="com.core.domain.dto.UserBasicInfoDTO">
+            <result property="id" column="user_id"/>
+            <result property="name" column="user_name"/>
+            <result property="image" column="user_image"/>
+        </association>
+        <association property="club" javaType="com.core.domain.dto.ClubBasicInfoDTO">
+            <result property="id" column="club_id"/>
+            <result property="name" column="club_name"/>
+            <result property="image" column="club_image"/>
+        </association>
+    </resultMap>
+    <resultMap id="BlogBasicInfoMap" type="com.core.domain.dto.BlogBasicInfoDTO">
+    <result property="id" column="blog_id"/>
+    <result property="title" column="blog_title"/>
+    <result property="content" column="blog_content"/>
+    <result property="likeCount" column="like_count"/>
+    <result property="createTime" column="blog_create_time"/>
+    <result property="images" column="blog_images" typeHandler="com.core.handler.StringListTypeHandler"/>
+    <association property="author" javaType="com.core.domain.dto.UserBasicInfoDTO">
+        <result property="id" column="user_id"/>
+        <result property="name" column="user_name"/>
+        <result property="image" column="user_image"/>
+    </association>
+    <association property="club" javaType="com.core.domain.dto.ClubBasicInfoDTO">
+        <result property="id" column="club_id"/>
+        <result property="name" column="club_name"/>
+        <result property="image" column="club_image"/>
+    </association>
+</resultMap>
+    <select id="findOne" resultMap="BlogResultMap">
+        SELECT
+        b.id AS blog_id,
+        b.title AS blog_title,
+        b.content AS blog_content,
+        b.like_count AS like_count,
+        b.user_id AS blog_user_id,
+        b.club_id AS blog_club_id,
+        u.id AS user_id,
+        u.name AS user_name,
+        u.image AS user_image,
+        c.id AS club_id,
+        c.name AS club_name,
+        c.image AS club_image,
+        group_concat(bi.url) AS blog_images
+        FROM
+        blog b
+        INNER JOIN
+        user u ON b.user_id = u.id
+        INNER JOIN
+        club c ON b.club_id = c.id
+        LEFT JOIN
+        blog_image bi on bi.blog_id = b.id
+        <where>
+            <if test="id != null">
+                b.id = #{id}
+            </if>
+            <if test="title != null">
+                AND b.title = #{title}
+            </if>
+            <if test="clubId != null">
+                AND b.club_id = #{clubId}
+            </if>
+            <if test="userId != null">
+                AND b.user_id = #{userId}
+            </if>
+        </where>
+        GROUP BY b.id
+        ORDER BY b.create_time DESC
+    </select>
+
+
+
+    <select id="findBasicInfoList" resultMap="BlogBasicInfoMap">
+        SELECT
+        b.id AS blog_id,
+        b.title AS blog_title,
+        b.content AS blog_content,
+        b.like_count AS like_count,
+        b.create_time as blog_create_time,
+        u.id AS user_id,
+        u.name AS user_name,
+        u.image AS user_image,
+        c.id AS club_id,
+        c.name AS club_name,
+        c.image AS club_image,
+        group_concat(bi.url) AS blog_images
+        FROM
+        blog b
+        INNER JOIN
+        user u ON b.user_id = u.id
+        INNER JOIN
+        club c ON b.club_id = c.id
+        LEFT JOIN
+        blog_image bi on bi.blog_id = b.id
+        where club_id = #{query.clubId}
+        GROUP BY b.id , b.create_time
+        ORDER BY b.create_time DESC
+    </select>
+
+    <update id="update">
+        update blog
+        <set>
+            <if test="title != null">
+                title = #{title},
+            </if>
+            <if test="content != null">
+                content = #{content}
+            </if>
+        </set>
+        where id =#{id}
+    </update>
+
+    <select id="findBasicInfoListWithLike" resultType="com.core.domain.dto.BlogBasicInfoDTO">
+        select b.*
+        from user_blog_like ubl
+        inner join blog b on ubl.blog_id = b.id
+        where ubl.user_id = #{query.userId}
+        order by ubl.create_time desc
+    </select>
+    <select id="findBasicInfoListWithCollect" resultType="com.core.domain.dto.BlogBasicInfoDTO">
+        select b.*
+        from user_blog_collect ubc
+        inner join blog b on ubc.blog_id = b.id
+        where ubc.user_id = #{query.userId}
+        order by ubc.create_time desc
+    </select>
+
+    <select id="findBasicInfoListWithOwn" resultType="com.core.domain.dto.BlogBasicInfoDTO">
+        select b.*
+        from blog b
+        where  b.user_id = #{query.userId}
+        order by b.create_time desc
+    </select>
+
+</mapper>

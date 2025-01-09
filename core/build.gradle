@@ -1,0 +1,67 @@
+plugins {
+    id 'org.springframework.boot' version '3.1.6'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'java'
+    id("io.freefair.lombok") version "8.11"
+}
+
+group = 'com'
+version = '1'
+sourceCompatibility = '17'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //项目依赖
+
+    // Spring AOP
+    implementation 'org.springframework:spring-aspects:6.2.0'
+
+
+
+    // 验证相关
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // RabbitMQ
+    implementation 'com.rabbitmq:amqp-client:5.22.0'
+
+    // JWT
+    implementation 'com.auth0:java-jwt:3.10.3'
+
+    // 日志
+    implementation 'org.projectlombok:lombok'
+
+    // JSON
+    implementation 'com.alibaba:fastjson:1.2.62'
+
+    // Amazon S3
+    implementation 'software.amazon.awssdk:s3:2.20.0'
+
+    // Redis
+    implementation 'redis.clients:jedis:5.2.0'
+
+    // 数据库
+    implementation 'com.baomidou:mybatis-plus-spring-boot3-starter:3.5.7'
+    implementation 'mysql:mysql-connector-java:8.0.30'
+
+    // Spring Boot Web
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // 测试
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+tasks.named('jar') {
+    enabled = false // 禁用默认 jar 任务
+}
+
+tasks.named('bootJar') {
+    enabled = true // 启用 bootJar
+
+}
+

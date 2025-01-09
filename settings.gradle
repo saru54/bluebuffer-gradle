@@ -1,0 +1,6 @@
+rootProject.name = 'bluebuffer-gradle'
+
+include(
+   "core","search", "recommend","file","message"
+)
+
